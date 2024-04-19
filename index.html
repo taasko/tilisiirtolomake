@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tilisiirtolomake</title>
+
+    <link rel="stylesheet" href="./a4.css" />
+
+    <style>
+      body,
+      input[type="date"],
+      textarea[placeholder] {
+        font-family: Arial, sans-serif;
+      }
+
+      button {
+        padding: 0.7em;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .page-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+      }
+
+      .display-none {
+        display: none;
+      }
+
+      .grid-container {
+        font-size: 7pt;
+        display: grid;
+        grid-template-columns: 20mm 91.4mm 22.85mm 22.85mm 45.7mm;
+        grid-template-rows: 16.9333333mm 14.8166667mm 16.933333315mm 16.933333315mm 8.46666667mm 27.5166667mm;
+      }
+
+      /* Automatically top and bot row no border. */
+      .grid-container > :nth-child(-n + 3) {
+        border-top: none;
+      }
+      .grid-container > :nth-last-child(-n + 2) {
+        border-bottom: none;
+        border-left: none !important;
+        border-right: none !important;
+      }
+
+      .no-left-border {
+        border-left: none !important;
+      }
+      .no-right-border {
+        border-right: none !important;
+      }
+      .no-bottom-border {
+        border-bottom: none !important;
+      }
+      .no-top-border {
+        border-top: none !important;
+      }
+
+      .grid-item {
+        padding: 0.25em;
+        border: 0.25mm solid black;
+      }
+
+      .grid-item input,
+      .grid-item textarea {
+        border: none !important;
+        font-size: 9pt;
+        margin: 0;
+        padding: 0;
+        border: 1px solid black;
+        width: 100%;
+        background-color: transparent;
+      }
+      .grid-item textarea {
+        resize: none;
+        height: 100%;
+      }
+
+      .grid-item.span-2 {
+        grid-column: auto / span 2;
+      }
+
+      .grid-item.span-3 {
+        grid-column: auto / span 3;
+      }
+
+      .font-size-6 {
+        font-size: 6pt;
+      }
+
+      .font-size-8 {
+        font-size: 8pt;
+      }
+
+      .font-bold {
+        font-weight: bold;
+      }
+
+      @media print {
+        .print-none {
+          display: none;
+        }
+
+        button {
+          display: none !important;
+        }
+
+        input,
+        textarea {
+          border: none !important;
+          box-shadow: none !important;
+          outline: none !important;
+        }
+
+        ::placeholder {
+          color: transparent !important;
+          opacity: 1;
+        }
+
+        :-ms-input-placeholder {
+          color: transparent !important;
+        }
+
+        ::-ms-input-placeholder {
+          color: transparent !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="print-none"
+      style="text-align: center; padding: 0 1em; background-color: white"
+    >
+      <h2>Tilisiirtolomakegeneraattori</h2>
+
+      <p>Tietoja ei lähetetä eteenpäin, vaan kaikki tapahtuu selaimessa.</p>
+      <p>
+        Paina lopuksi "Tulosta"-painiketta tai Ctrl+P näppäinyhdistelmää, kun
+        haluat tulostaa tilisiirtolomakkeen. Voit tallentaa sen itsellesi
+        PDF-muodossa, tai valita oman tulostimesi.
+      </p>
+    </div>
+
+    <!-- <form id="tilisiirtolomake">
+      <h1>Tilisiirtolomake</h1>
+
+      <div class="form-group focus-div">
+        <label for="saaja">Saajan tilinumero (IBAN/BIC):</label>
+        <input
+          type="text"
+          id="saaja"
+          name="saaja"
+          placeholder="Saajan tilinumero"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="maksaja">Maksajan nimi ja osoite:</label>
+        <input
+          type="text"
+          id="maksaja"
+          name="maksaja"
+          placeholder="Maksajan nimi ja osoite"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="viite">Viitenumero:</label>
+        <input type="text" id="viite" name="viite" placeholder="Viitenumero" />
+      </div>
+
+      <div class="form-group">
+        <label for="erapaiva">Eräpäivä:</label>
+        <input
+          type="date"
+          id="erapaiva"
+          name="erapaiva"
+          placeholder="Eräpäivä"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="summa">Maksettava summa (Euro):</label>
+        <input
+          type="text"
+          id="summa"
+          name="summa"
+          placeholder="Maksettava summa"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="allekirjoitus">Allekirjoitus:</label>
+        <input
+          type="text"
+          id="allekirjoitus"
+          name="allekirjoitus"
+          placeholder="Allekirjoitus"
+        />
+      </div>
+
+      <button type="button">Syötä</button>
+    </form> -->
+
+    <div class="page">
+      <div class="page-container">
+        <form id="tilisiirtolomake">
+          <div class="grid-container">
+            <div class="grid-item no-left-border">
+              Saajan tilinumero<br />Mottagarens kontonummer
+            </div>
+            <div class="grid-item focus-div">
+              IBAN
+              <input
+                name="iban"
+                type="text"
+                placeholder="Saajan tilinumero tähän..."
+              />
+            </div>
+            <div
+              class="grid-item span-3 focus-div no-right-border no-bottom-border"
+            >
+              BIC
+              <input name="bic" type="text" placeholder="BIC tähän..." />
+            </div>
+
+            <div class="grid-item no-left-border">Saaja<br />Mottagare</div>
+            <div class="grid-item">
+              <textarea
+                name="saaja"
+                placeholder="Saajan tiedot tähän..."
+              ></textarea>
+            </div>
+            <div
+              class="grid-item span-3 no-right-border no-top-border no-bottom-border"
+            ></div>
+
+            <div
+              class="grid-item no-left-border no-bottom-border no-right-border"
+              style="display: flex"
+            >
+              <div
+                class="font-size-8 font-bold"
+                style="writing-mode: vertical-rl; transform: scale(-1)"
+              >
+                GIRERING
+              </div>
+              <div>Maksajan nimi ja osoite<br />Betalarens namn och adress</div>
+            </div>
+            <div class="grid-item no-bottom-border no-left-border">
+              <textarea
+                name="maksaja"
+                placeholder="Maksajan nimi ja osoite tähän..."
+              ></textarea>
+            </div>
+            <div class="grid-item span-3 no-right-border no-top-border"></div>
+
+            <div
+              class="grid-item no-left-border no-top-border no-right-border"
+              style="display: flex"
+            >
+              <div
+                class="font-size-8 font-bold"
+                style="writing-mode: vertical-rl; transform: scale(-1)"
+              >
+                TILISIIRTO.
+              </div>
+              <div>Allekirjoitus<br />Underskrift</div>
+            </div>
+            <div class="grid-item no-top-border no-left-border">
+              <hr
+                style="
+                  margin: 5em 3em 0 3em;
+                  border-color: black;
+                  border: 0.13mm solid black;
+                "
+              />
+            </div>
+            <div class="grid-item">Viitenumero<br />Ref. nr</div>
+            <div class="grid-item span-2 focus-div no-right-border">
+              &nbsp;
+              <input
+                name="viite"
+                type="text"
+                placeholder="Viitenumero tähän..."
+              />
+            </div>
+
+            <div class="grid-item no-left-border">
+              Tililtä nro<br />Från konto nr
+            </div>
+            <div class="grid-item focus-div">
+              &nbsp;
+              <input
+                name="tilinumero"
+                type="text"
+                placeholder="Tilinumero tähän..."
+              />
+            </div>
+            <div class="grid-item">Eräpäivä<br />Förfallodag</div>
+            <div class="grid-item focus-div">
+              &nbsp;
+              <input name="erapaiva" type="date" />
+            </div>
+            <div class="grid-item focus-div no-right-border">
+              Euro
+              <input
+                name="summa"
+                type="number"
+                step="0.01"
+                placeholder="Laskun summa tähän..."
+              />
+            </div>
+
+            <div
+              class="grid-item span-3 no-left-border"
+              style="text-align: center"
+            >
+              <svg class="display-none" id="barcode"></svg>
+            </div>
+            <div class="grid-item span-2 font-size-6 no-right-border">
+              Maksu välitetään saajalle maksujenvälityksen ehtojen mukaisesti ja
+              vain maksajan ilmoittaman tilinumeron perusteella. Betalningen
+              förmedlas till mottagaren enligt villkoren för
+              betalningsförmedling och endast till det kontonummer som betalaren
+              angivit.
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div
+      class="print-none"
+      style="text-align: center; padding: 1.5em 0; background-color: white"
+    >
+      <button onclick="window.print()">Tulosta</button>
+    </div>
+
+    <footer
+      class="print-none"
+      style="text-align: center; padding-bottom: 2em; background-color: white"
+    >
+      &copy; 2024 taavi.dev
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.js"></script>
+    <script src="./finnish-bank-utils.js"></script>
+
+    <script>
+      function formatDate(inputDate) {
+        let day = String(inputDate.getDate()).padStart(2, "0");
+        let month = String(inputDate.getMonth() + 1).padStart(2, "0"); // Months are 0-based in JavaScript
+        let year = inputDate.getFullYear();
+
+        let formattedDate = `${day}.${month}.${year}`;
+
+        return formattedDate;
+      }
+
+      function refreshBarcode() {
+        const formElement = document.getElementById("tilisiirtolomake");
+        const formData = new FormData(formElement);
+        // https://www.finanssiala.fi/wp-content/uploads/2021/03/Tilisiirto-opas.pdf
+        // https://www.finanssiala.fi/wp-content/uploads/2021/03/Pankkiviivakoodi-opas.pdf
+
+        const barcode = formatFinnishVirtualBarCode({
+          iban: formData.get("iban"),
+          sum: Number(formData.get("summa")),
+          reference: formData.get("viite"),
+          date: formatDate(new Date(formData.get("erapaiva"))),
+        });
+
+        if (!barcode) {
+          return;
+        }
+
+        const barcodeElement = document.getElementById("barcode");
+        barcodeElement.classList.remove("display-none");
+
+        try {
+          JsBarcode("#barcode", barcode, {
+            format: "CODE128C",
+            displayValue: false,
+            width: 1.4,
+            height: 40,
+          });
+        } catch (e) {
+          console.error(e);
+          barcodeElement.classList.add("display-none");
+        }
+      }
+
+      const focusHelpers = document.getElementsByClassName("focus-div");
+      for (let i = 0; i < focusHelpers.length; i++) {
+        focusHelpers[i].addEventListener("click", function (e) {
+          const input = focusHelpers[i].querySelector("input");
+          input.focus();
+        });
+      }
+
+      const inputs = document.getElementsByTagName("input");
+      for (let i = 0; i < inputs.length; ++i) {
+        inputs[i].addEventListener("input", refreshBarcode);
+      }
+    </script>
+  </body>
+</html>
