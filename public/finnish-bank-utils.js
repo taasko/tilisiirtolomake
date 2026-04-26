@@ -149,7 +149,7 @@ function isValidFinnishRefNumber(refNumber) {
     !refNumber ||
     typeof refNumber !== "string" ||
     !FINNISH_REF_NUMBER_REGEX.test(
-      removeAllWhiteSpaces(refNumber.toUpperCase())
+      removeAllWhiteSpaces(refNumber.toUpperCase()),
     )
   ) {
     return false;
@@ -222,15 +222,15 @@ function formatFinnishRefNumber(refNumber, separator = " ") {
         refNumber.substr(0, 4) + removeLeadingZeros(refNumber.substr(4));
       return removeStringFromEnd(
         refNumber.replace(/.{4}/g, "$&" + separator),
-        separator
+        separator,
       );
     } else {
       refNumber = removeLeadingZeros(refNumber);
       return reverseString(
         removeStringFromEnd(
           reverseString(refNumber).replace(/.{5}/g, "$&" + separator),
-          separator
-        )
+          separator,
+        ),
       );
     }
   }
@@ -248,7 +248,7 @@ function formatFinnishIBAN(accountNumber, separator = " ") {
     accountNumber = removeAllWhiteSpaces(accountNumber.toUpperCase());
     return removeStringFromEnd(
       accountNumber.replace(/.{4}/g, "$&" + separator),
-      separator
+      separator,
     );
   }
 }
